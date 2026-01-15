@@ -17,15 +17,15 @@ This repository contains a Power BI project analyzing financial performance acro
 Transformed a single flat table into a optimized **Star Schema** to improve query performance and logical separation.
 
 * **Dimension Creation:** Created dedicated dimension tables by duplicating the source, removing duplicates, and generating **Surrogate Index Keys**.
-* **Fact Table:** Renamed the original table to `SALES_FACT` and replaced descriptive text columns with Foreign Keys via **Merge Queries** in Power Query.
+* **Fact Table:** Renamed the original table to **SALES_FACT** and replaced descriptive text columns with Foreign Keys via **Merge Queries** in Power Query.
 * **Cardinality:** Established **One-to-Many (1:*)** relationships between Dimensions and the Fact table.
 
 ### 2. Advanced DAX & Time Intelligence
 Instead of relying on the source data's date column, I implemented a dynamic **Date Dimension** using DAX.
 
-* **Dim_Date Logic:** Used `CALENDAR`, `ADDCOLUMNS`, `YEAR`, `MONTH`, and `FORMAT`.
-    * *Reasoning:* Creating a calendar from the Fact table causes "missing dates" (e.g., weekends with zero sales), which breaks Time Intelligence functions. The DAX `CALENDAR` function ensures a continuous timeline.
-* **Measure Table:** Created a dedicated `_Measures` table to organize calculations.
+* **Dim_Date Logic:** Used **CALENDAR**, **ADDCOLUMNS**, **YEAR**, **MONTH**, and **FORMAT**.
+    * *Reasoning:* Creating a calendar from the Fact table causes "missing dates" (e.g., weekends with zero sales), which breaks Time Intelligence functions. The DAX **CALENDAR** function ensures a continuous timeline.
+* **Measure Table:** Created a dedicated **_Measures** table to organize calculations.
 
 ### 3. Key Measures & Formulas
 Implemented explicit measures using best-practice functions for error handling and filter context manipulation.
@@ -46,7 +46,7 @@ Implemented explicit measures using best-practice functions for error handling a
 
 ### 4. Dashboard Layout
 Designed using the **"Header & Grid"** layout for executive readability:
-* **Header:** Top-row KPI Cards (`Sales`, `Profit`, `Growth`) aligned with Dropdown Slicers (`Region`, `Product`) to maximize screen real estate.
+* **Header:** Top-row KPI Cards (Sales, Profit, Growth) aligned with Dropdown Slicers (Region, Product) to maximize screen real estate.
 * **Grid:** Side-by-side comparison of **Monthly Trends** (Line Chart) and **Segment Profitability** (Clustered Bar Chart).
 
 ---
