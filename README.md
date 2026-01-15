@@ -9,7 +9,7 @@ This repository contains a Power BI project analyzing financial performance acro
 * **Goal:** Build an executive "Header & Grid" dashboard to visualize Year-over-Year (YoY) growth and profitability drivers.
 * **[Download .pbix file](./Corporate_Financial_Dashboard.pbix)**
 
-<img width="800" alt="Corporate Dashboard Preview" src="dashboard-preview.png" />
+<img width="800" alt="Corporate Dashboard Preview" src="Corporate_Dashboard.png" />
 
 ## Technical Implementation
 
