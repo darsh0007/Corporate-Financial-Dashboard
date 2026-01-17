@@ -1,48 +1,46 @@
 # Corporate Financial Performance Dashboard
 
-This repository contains a Power BI project analyzing financial performance across multiple global segments. The goal was to transform raw flat-file data into a professional Star Schema data model to enable high-performance time-intelligence reporting.
+This repository contains a full-stack BI project analyzing financial performance across multiple global segments. The goal was to build an automated data pipeline and a professional Star Schema model to enable high-performance reporting and scenario analysis.
 
 ## Project Overview
 
-* **Tool Used:** Microsoft Power BI (Desktop & Query Editor)
-* **Dataset:** Financial Sample (Sales, Profit, Segments, Countries)
-* **Goal:** Build an executive "Header & Grid" dashboard to visualize Year-over-Year (YoY) growth and profitability drivers.
+* **Tools Used:** Python (Pandas/SQLAlchemy), Microsoft SQL Server, Power BI, Excel.
+* **Dataset:** Financial Sample (Sales, Profit, Segments) + Budget Targets.
+* **Goal:** Build an executive "Header & Grid" dashboard to visualize Year-over-Year (YoY) growth and simulate cost-inflation scenarios.
 * **[Download .pbix file](./Corporate_Financial_Dashboard.pbix)**
 
 <img width="800" alt="Corporate Dashboard Preview" src="Corporate_Dashboard.png" />
 
 ## Technical Implementation
 
-### 1. Data Modeling (Star Schema)
-Transformed a single flat table into a optimized **Star Schema** to improve query performance and logical separation.
+### 1. Data Engineering (Python Automation & SQL)
+Instead of relying on manual file imports, I built an automated pipeline to handle the data ingestion.
 
-* **Dimension Creation:** Created dedicated dimension tables by duplicating the source, removing duplicates, and generating **Surrogate Index Keys**.
-* **Fact Table:** Renamed the original table to **SALES_FACT** and replaced descriptive text columns with Foreign Keys via **Merge Queries** in Power Query.
-* **Cardinality:** Established **One-to-Many (1:*)** relationships between Dimensions and the Fact table.
+* **Python ETL:** Wrote a Python script (etl_pipeline.py) using **Pandas** to programmatically clean the raw CSV logs (stripping currency symbols like '$' and ',') and auto-detect data types.
+* **SQL Loading:** Used **SQLAlchemy** to automatically generate the table structure and insert the cleaned data into **SQL Server**, replacing manual "Import Wizards".
 
-### 2. Advanced DAX & Time Intelligence
-Instead of relying on the source data's date column, I implemented a dynamic **Date Dimension** using DAX.
+### 2. Data Modeling (Hybrid Star Schema)
+Transformed disparate sources into a unified Star Schema to enable multi-source reporting.
 
-* **Dim_Date Logic:** Used **CALENDAR**, **ADDCOLUMNS**, **YEAR**, **MONTH**, and **FORMAT**.
-    * *Reasoning:* Creating a calendar from the Fact table causes "missing dates" (e.g., weekends with zero sales), which breaks Time Intelligence functions. The DAX **CALENDAR** function ensures a continuous timeline.
-* **Measure Table:** Created a dedicated **_Measures** table to organize calculations.
+* **Hybrid Architecture:** Connected Power BI to two different sources simultaneously:
+    * **SQL Server:** For the main transactional data (Sales_FACT).
+    * **Excel:** For budget targets to prove "Diverse Source" integration.
+* **Dimension Creation:** Created a shared Dim_Country dimension by referencing the SQL source and removing duplicates, allowing me to filter both SQL and Excel data with one slicer.
+* **Cardinality:** Established **One-to-Many (1:*)** relationships between Dimensions and Fact tables.
 
-### 3. Key Measures & Formulas
-Implemented explicit measures using best-practice functions for error handling and filter context manipulation.
+### 3. Scenario Analysis & Advanced DAX
+I moved beyond static reporting by engineering a "What-If" parameter showing how a 10% cost increase impacts projected profit to help stakeholders visualize risk.
 
-* **Profit Margin %:**
+<img width="800" alt="Cost_Increase" src="https://github.com/user-attachments/assets/82ce4668-c30f-46b8-81c5-4d9614b19435" />
+
+* **Cost Simulation:** Created a dynamic parameter to simulate a **Supply Chain Cost Increase** (0-20%).
+* **Projected Profit Measure:**
     ```dax
-    Profit Margin % = DIVIDE([Total Profit], [Total Sales], 0)
+    Projected Profit =
+    VAR CostFactor = 1 + 'Cost Increase Simulation'[Value]
+    RETURN [Total Sales] - (SUM(Sales_FACT[COGS]) * CostFactor)
     ```
-    * *Note:* Used `DIVIDE` instead of `/` to automatically handle "Divide by Zero" errors.
-* **Sales Last Year:**
-    ```dax
-    Sales Last Year = CALCULATE([Total Sales], SAMEPERIODLASTYEAR(Dim_Date[Date]))
-    ```
-* **YoY Growth %:**
-    ```dax
-    Sales YoY Growth % = DIVIDE([Total Sales] - [Sales Last Year], [Sales Last Year], 0)
-    ```
+* **Time Intelligence:** Implemented a dynamic **Dim_Date** using **CALENDAR** and **ADDCOLUMNS** to ensure continuous timelines for YoY calculations, preventing breaks caused by missing weekend data.
 
 ### 4. Dashboard Layout
 Designed using the **"Header & Grid"** layout for executive readability:
@@ -52,6 +50,6 @@ Designed using the **"Header & Grid"** layout for executive readability:
 ---
 
 ## Notes
-* **Data Source:** Microsoft Financial Sample.
-* **ETL Strategy:** All text-based columns were removed from the Fact table after merging to reduce file size and improve processing speed.
+* **Data Source:** Microsoft Financial Sample & Custom Target Data.
+* **ETL Strategy:** Text-based columns were removed from the Fact table after merging to reduce file size and improve processing speed.
 * **Provided here for learning and demonstration purposes.**
